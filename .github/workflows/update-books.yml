@@ -1,8 +1,14 @@
 name: Update Books
 
+permissions:
+  contents: write   # allows pushing commits
+
 on:
   workflow_dispatch:
     inputs:
+      action:
+        description: "add / edit / remove"
+        required: true
       password:
         required: true
       title:
@@ -11,13 +17,21 @@ on:
         required: false
       price:
         required: false
+      index:
+        description: "For edit/remove: 0-based index of book in category"
+        required: false
 
 jobs:
   update:
     runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
 
+    steps:
+      # Checkout repo
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false  # we will use PAT
+
+      # Verify admin password
       - name: Verify Admin Password
         run: |
           if [ "${{ github.event.inputs.password }}" != "${{ secrets.ADMIN_PASSWORD }}" ]; then
@@ -26,15 +40,47 @@ jobs:
           fi
           echo "✅ Password verified"
 
+      # Ensure jq is installed
+      - name: Install jq
+        run: sudo apt-get update && sudo apt-get install -y jq
+
+      # Perform action on books.json
       - name: Update books.json
         run: |
-          jq '.categories[0].books += [{"title":"${{ github.event.inputs.title }}","author":"${{ github.event.inputs.author }}","price":"${{ github.event.inputs.price }}"}]' books.json > tmp.json
-          mv tmp.json books.json
+          ACTION="${{ github.event.inputs.action }}"
+          TITLE="${{ github.event.inputs.title }}"
+          AUTHOR="${{ github.event.inputs.author }}"
+          PRICE="${{ github.event.inputs.price }}"
+          INDEX="${{ github.event.inputs.index }}"
 
-      - name: Commit changes
+          FILE="books.json"
+
+          case "$ACTION" in
+            add)
+              jq --arg title "$TITLE" --arg author "$AUTHOR" --arg price "$PRICE" \
+                 '.categories[0].books += [{"title": $title, "author": $author, "price": $price}]' $FILE > tmp.json
+              ;;
+            edit)
+              if [ -z "$INDEX" ]; then echo "Index required for edit"; exit 1; fi
+              jq --arg title "$TITLE" --arg author "$AUTHOR" --arg price "$PRICE" \
+                 ".categories[0].books[$INDEX] = {\"title\": \$title, \"author\": \$author, \"price\": \$price}" $FILE > tmp.json
+              ;;
+            remove)
+              if [ -z "$INDEX" ]; then echo "Index required for remove"; exit 1; fi
+              jq "del(.categories[0].books[$INDEX])" $FILE > tmp.json
+              ;;
+            *)
+              echo "Unknown action: $ACTION"; exit 1
+              ;;
+          esac
+
+          mv tmp.json $FILE
+
+      # Commit changes using PAT
+      - name: Commit & Push changes
         run: |
-          git config user.name "github-actions"
+          git config user.name "GitHub Actions"
           git config user.email "actions@github.com"
           git add books.json
-          git commit -m "Admin added book: ${{ github.event.inputs.title }}"
-          git push
+          git commit -m "Admin $ACTION book: $TITLE" || echo "No changes to commit"
+          git push https://x-access-token:${{ secrets.ADMIN_PAT }}@github.com/${{ github.repository }} HEAD:main
