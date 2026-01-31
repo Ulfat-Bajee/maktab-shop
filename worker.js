@@ -22,7 +22,8 @@ addEventListener("fetch", event => {
       method: "POST",
       headers: {
         "Accept": "application/vnd.github+json",
-        "User-Agent": "Cloudflare-Worker"
+        "User-Agent": "Cloudflare-Worker",
+        "Authorization": "token " // Hardcoded PAT as requested
       },
       body: JSON.stringify({
         ref: "main",  // branch to trigger
