@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Admin – Maktab</title>
+</head>
+<body>
+  <h1>🔐 Admin Panel</h1>
+
+  <form id="adminForm">
+    <input type="password" id="password" placeholder="Admin Password" required><br><br>
+    <input type="text" id="title" placeholder="Book Title" required>
+    <input type="text" id="author" placeholder="Author">
+    <input type="text" id="price" placeholder="Price"><br><br>
+    <button type="submit">Add Book</button>
+  </form>
+
+  <p>After submitting, the books will automatically update on the site.</p>
+
+  <script>
+    document.getElementById("adminForm").addEventListener("submit", async e => {
+      e.preventDefault();
+
+      const payload = {
+        password: document.getElementById("password").value,
+        title: document.getElementById("title").value,
+        author: document.getElementById("author").value,
+        price: document.getElementById("price").value
+      };
+
+      const workerURL = "http://patient-meadow-010b.shahshadab1680.workers.dev/"; // Will create next
+
+      const res = await fetch(workerURL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+
+      if(res.ok){
+        alert("Book added successfully!");
+        document.getElementById("adminForm").reset();
+      } else {
+        alert("Failed to add book. Check password.");
+      }
+    });
+  </script>
+</body>
+</html>

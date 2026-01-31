@@ -1,0 +1,40 @@
+name: Update Books
+
+on:
+  workflow_dispatch:
+    inputs:
+      password:
+        required: true
+      title:
+        required: true
+      author:
+        required: false
+      price:
+        required: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Verify Admin Password
+        run: |
+          if [ "${{ github.event.inputs.password }}" != "${{ secrets.ADMIN_PASSWORD }}" ]; then
+            echo "❌ Invalid password"
+            exit 1
+          fi
+          echo "✅ Password verified"
+
+      - name: Update books.json
+        run: |
+          jq '.categories[0].books += [{"title":"${{ github.event.inputs.title }}","author":"${{ github.event.inputs.author }}","price":"${{ github.event.inputs.price }}"}]' books.json > tmp.json
+          mv tmp.json books.json
+
+      - name: Commit changes
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git add books.json
+          git commit -m "Admin added book: ${{ github.event.inputs.title }}"
+          git push
