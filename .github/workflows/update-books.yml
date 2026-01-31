@@ -17,6 +17,8 @@ on:
         required: false
       price:
         required: false
+      imageUrl:
+        required: false
       index:
         description: "For edit/remove: 0-based index of book in category"
         required: false
@@ -51,19 +53,20 @@ jobs:
           TITLE="${{ github.event.inputs.title }}"
           AUTHOR="${{ github.event.inputs.author }}"
           PRICE="${{ github.event.inputs.price }}"
+          IMAGE_URL="${{ github.event.inputs.imageUrl }}"
           INDEX="${{ github.event.inputs.index }}"
 
           FILE="books.json"
 
           case "$ACTION" in
             add)
-              jq --arg title "$TITLE" --arg author "$AUTHOR" --arg price "$PRICE" \
-                 '.categories[0].books += [{"title": $title, "author": $author, "price": $price}]' $FILE > tmp.json
+              jq --arg title "$TITLE" --arg author "$AUTHOR" --arg price "$PRICE" --arg imageUrl "$IMAGE_URL" \
+                 '.categories[0].books += [{"title": $title, "author": $author, "price": $price, "imageUrl": $imageUrl}]' $FILE > tmp.json
               ;;
             edit)
               if [ -z "$INDEX" ]; then echo "Index required for edit"; exit 1; fi
-              jq --arg title "$TITLE" --arg author "$AUTHOR" --arg price "$PRICE" \
-                 ".categories[0].books[$INDEX] = {\"title\": \$title, \"author\": \$author, \"price\": \$price}" $FILE > tmp.json
+              jq --arg title "$TITLE" --arg author "$AUTHOR" --arg price "$PRICE" --arg imageUrl "$IMAGE_URL" \
+                 ".categories[0].books[$INDEX] = {\"title\": \$title, \"author\": \$author, \"price\": \$price, \"imageUrl\": \$imageUrl}" $FILE > tmp.json
               ;;
             remove)
               if [ -z "$INDEX" ]; then echo "Index required for remove"; exit 1; fi

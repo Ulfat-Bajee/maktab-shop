@@ -18,6 +18,7 @@
           cat.books.forEach(book => {
             container.innerHTML += `
               <p>
+                <img src="${book.imageUrl}" alt="${book.title}" width="100"><br>
                 <b>${book.title}</b> - ${book.author}<br>
                 💰 ${book.price}<br>
                 <a href="https://wa.me/92XXXXXXXXX?text=I want ${book.title}">Order via WhatsApp</a> |
