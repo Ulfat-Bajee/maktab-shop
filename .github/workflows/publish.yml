@@ -1,0 +1,53 @@
+name: Build and Publish Release
+
+on:
+  push:
+    tags:
+      - 'v*' # Trigger on version tags like v1.0.0, v1.1.0 etc.
+
+permissions:
+  contents: write
+
+jobs:
+  publish:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Build and Package
+        run: npm run dist
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: dist/MaktabShop-Inventory.exe
+          name: Release ${{ github.ref_name }}
+          draft: false
+          prerelease: false
+          body: |
+            ## Maktab Shop Inventory - Portable Release
+            
+            This is a portable version of the Maktab Shop Inventory system.
+            
+            ### How to use:
+            1. Download `MaktabShop-Inventory.exe`.
+            2. Place it in your **OneDrive** folder.
+            3. Run the application.
+            
+            Your data (stock, categories, and invoices) will be automatically saved to your **Documents\MaktabShop** folder and synced via OneDrive.
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

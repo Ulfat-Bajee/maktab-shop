@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maktab Shop | Inventory Management</title>
+    <link rel="stylesheet" href="assets/inventory.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body class="light-mode">
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo">
+                <span class="icon">📚</span>
+                <span class="text">Maktab Shop</span>
+            </div>
+            <nav>
+                <button class="nav-item active" data-tab="dashboard">
+                    <span class="icon">📊</span>
+                    <span class="text">Dashboard</span>
+                </button>
+                <button class="nav-item" data-tab="inventory">
+                    <span class="icon">📦</span>
+                    <span class="text">Inventory</span>
+                </button>
+                <button class="nav-item" data-tab="invoices">
+                    <span class="icon">📄</span>
+                    <span class="text">Invoices</span>
+                </button>
+                <button class="nav-item" data-tab="pos">
+                    <span class="icon">🏧</span>
+                    <span class="text">Generate Invoice</span>
+                </button>
+            </nav>
+            <div class="sidebar-footer">
+                <div class="sync-status">
+                    <span class="status-dot online"></span>
+                    <span class="status-text">OneDrive Synced</span>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="top-bar">
+                <h1 id="tab-title">Dashboard</h1>
+                <div class="user-actions">
+                    <button id="theme-toggle" class="icon-btn">🌓</button>
+                    <div class="search-box">
+                        <input type="text" id="global-search" placeholder="Search items...">
+                    </div>
+                </div>
+            </header>
+
+            <!-- Content Area -->
+            <div id="content-area" class="tab-content scrollable">
+                <!-- Dashboard Tab -->
+                <div id="tab-dashboard" class="tab-pane active">
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <span class="label">Total Items</span>
+                            <span class="value" id="stat-total-items">0</span>
+                        </div>
+                        <div class="stat-card">
+                            <span class="label">Stock Value</span>
+                            <span class="value" id="stat-stock-value">PKR 0</span>
+                        </div>
+                        <div class="stat-card">
+                            <span class="label">Low Stock</span>
+                            <span class="valueHighlight" id="stat-low-stock">0</span>
+                        </div>
+                    </div>
+
+                    <div class="recent-section">
+                        <h2>Recent Invoices</h2>
+                        <div class="table-container">
+                            <table id="recent-invoices-table">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Date</th>
+                                        <th>Customer</th>
+                                        <th>Total</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Inventory Tab -->
+                <div id="tab-inventory" class="tab-pane">
+                    <div class="section-actions">
+                        <button class="btn btn-primary" onclick="openItemModal()">+ Add New Item</button>
+                        <select id="category-filter" onchange="renderInventory()">
+                            <option value="all">All Categories</option>
+                        </select>
+                        <button class="btn btn-secondary" onclick="manageCategories()">Manage Categories</button>
+                    </div>
+                    <div class="table-container">
+                        <table id="inventory-table">
+                            <thead>
+                                <tr>
+                                    <th>Image</th>
+                                    <th>Title</th>
+                                    <th>Author</th>
+                                    <th>Category</th>
+                                    <th>Price</th>
+                                    <th>Stock</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="inventory-list"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Invoices Tab -->
+                <div id="tab-invoices" class="tab-pane">
+                    <div class="table-container">
+                        <table id="all-invoices-table">
+                            <thead>
+                                <tr>
+                                    <th>Invoice ID</th>
+                                    <th>Date</th>
+                                    <th>Customer</th>
+                                    <th>Contact</th>
+                                    <th>Total Amount</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- POS/Invoice Generation Tab -->
+                <div id="tab-pos" class="tab-pane">
+                    <div class="pos-layout">
+                        <div class="pos-search">
+                            <h3>Select Items</h3>
+                            <div class="pos-search-box">
+                                <input type="text" id="pos-item-search" placeholder="Search by name or code..."
+                                    oninput="searchPosItems()">
+                                <div id="pos-search-results" class="search-results"></div>
+                            </div>
+                        </div>
+                        <div class="pos-cart">
+                            <h3>Current Bill</h3>
+                            <div class="customer-info">
+                                <input type="text" id="cust-name" placeholder="Customer Name">
+                                <input type="text" id="cust-contact" placeholder="Customer Contact">
+                            </div>
+                            <div class="cart-items">
+                                <table id="cart-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Item</th>
+                                            <th>Qty</th>
+                                            <th>Price</th>
+                                            <th>Discount</th>
+                                            <th>Total</th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody></tbody>
+                                </table>
+                            </div>
+                            <div class="cart-footer">
+                                <div class="total-row">
+                                    <span>Subtotal:</span>
+                                    <span id="cart-subtotal">PKR 0</span>
+                                </div>
+                                <div class="total-row" style="color:var(--danger); font-size:0.9rem;">
+                                    <span>Total Discount:</span>
+                                    <span id="cart-discount">PKR 0</span>
+                                </div>
+                                <div class="total-row">
+                                    <span>Grand Total:</span>
+                                    <span id="cart-total">PKR 0</span>
+                                </div>
+                                <button class="btn btn-primary btn-block" onclick="generateInvoice()">Generate & Share
+                                    Invoice</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modals -->
+    <div id="modal-overlay" class="modal-overlay">
+        <div id="item-modal" class="modal">
+            <h2 id="modal-title">Add New Item</h2>
+            <form id="item-form">
+                <input type="hidden" id="edit-item-id">
+                <div class="form-group">
+                    <label>Title</label>
+                    <input type="text" id="item-title" required>
+                </div>
+                <div class="form-group">
+                    <label>Author/Brand</label>
+                    <input type="text" id="item-author">
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Category</label>
+                        <select id="item-category" required></select>
+                    </div>
+                    <div class="form-group">
+                        <label>Price (PKR)</label>
+                        <input type="number" id="item-price" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Stock</label>
+                        <input type="number" id="item-stock" value="0">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Image URL</label>
+                    <input type="text" id="item-image" placeholder="https://...">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Item</button>
+                </div>
+            </form>
+        </div>
+
+        <div id="category-modal" class="modal">
+            <h2>Manage Categories</h2>
+            <div class="category-manager">
+                <div class="add-cat" style="display:flex; flex-direction:column; gap:10px; margin-bottom:20px;">
+                    <input type="hidden" id="edit-cat-id">
+                    <input type="text" id="new-cat-name" placeholder="Category Name" required>
+                    <div style="display:flex; gap:10px;">
+                        <input type="number" id="new-cat-discount" placeholder="Discount Value" style="flex:1">
+                        <select id="new-cat-discount-type" style="width:120px">
+                            <option value="fixed">Rupees (PKR)</option>
+                            <option value="percent">Percentage (%)</option>
+                        </select>
+                    </div>
+                    <button class="btn btn-primary" id="btn-save-cat" onclick="handleSaveCategory()">Add
+                        Category</button>
+                </div>
+                <ul id="cat-list-manager" class="cat-list"></ul>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="closeModal()">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="assets/inventory.js"></script>
+</body>
+
+</html>

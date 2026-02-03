@@ -1,0 +1,29 @@
+{
+  "name": "maktab-shop-inventory",
+  "version": "1.0.0",
+  "description": "Inventory Management for Maktab Shop",
+  "author": "Maktab Shop",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder"
+  },
+  "devDependencies": {
+    "electron": "^40.1.0",
+    "electron-builder": "^26.7.0"
+  },
+  "build": {
+    "appId": "com.maktabshop.inventory",
+    "win": {
+      "target": "portable",
+      "icon": "assets/icon.png"
+    },
+    "portable": {
+      "artifactName": "MaktabShop-Inventory.exe"
+    }
+  },
+  "dependencies": {
+    "sqlite3": "^5.1.7"
+  }
+}
