@@ -1,0 +1,20 @@
+{
+    "categories": [
+      {
+        "name": "Quran",
+        "books": [
+          {
+            "title": "Tafseer Ibn Kathir",
+            "author": "Ibn Kathir",
+            "price": "2500 PKR",
+            "imageUrl": "assets/images/placeholder.jpg"
+          }
+        ]
+      },
+      {
+        "name": "Hadith",
+        "books": []
+      }
+    ]
+  }
+  

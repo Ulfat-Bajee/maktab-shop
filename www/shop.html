@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Maktab Shop Manager</title>
+  <link rel="stylesheet" href="assets/shop.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="brand">
+      <span>📚</span> Maktab Shop
+    </div>
+    
+    <div class="nav-section">
+      <div class="nav-title">Inventory</div>
+      <ul class="category-list" id="categoryList">
+        <!-- Injected by JS -->
+      </ul>
+      <button class="add-category-btn" onclick="addCategory()">+ New Category</button>
+    </div>
+
+    <div class="nav-section" style="margin-top: auto">
+      <div class="nav-title">System</div>
+      <div class="category-item" onclick="if(confirm('Clear all data?')) { localStorage.clear(); location.reload(); }">
+        Reset Data
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    
+    <!-- Top Header -->
+    <header class="header">
+      <div class="header-title">
+        <h2>Dashboard</h2>
+        <p>Manage your inventory and track stock</p>
+      </div>
+      <div class="action-bar">
+        <input type="text" id="searchInput" class="form-input" placeholder="Search items..." style="width: 250px;">
+        <button class="btn btn-primary" onclick="openModal()">+ Add Item</button>
+      </div>
+    </header>
+
+    <!-- Stats Row -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-label">Total Items</div>
+        <div class="stat-value" id="stat-total-items">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Inventory Value</div>
+        <div class="stat-value" id="stat-total-value">PKR 0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Active Categories</div>
+        <div class="stat-value" id="stat-categories">0</div>
+      </div>
+    </div>
+
+    <!-- Items Grid -->
+    <div class="items-grid" id="itemsGrid">
+      <!-- Injected by JS -->
+    </div>
+
+  </main>
+
+  <!-- Add/Edit Modal -->
+  <div class="modal-overlay">
+    <div class="modal" id="itemModal">
+      <div class="modal-header">
+        <h3 class="modal-title" id="modalTitle">Add New Item</h3>
+        <button onclick="closeModal()" style="border:none;background:none;cursor:pointer;font-size:1.5rem">&times;</button>
+      </div>
+      <form id="itemForm">
+        <div class="form-group">
+          <label class="form-label">Item Title</label>
+          <input type="text" id="inpTitle" class="form-input" required placeholder="e.g. Tafseer Ibn Kathir">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Author / Brand</label>
+          <input type="text" id="inpAuthor" class="form-input" placeholder="e.g. Ibn Kathir">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Category</label>
+          <select id="categorySelect" class="form-select"></select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Price (PKR)</label>
+          <input type="number" id="inpPrice" class="form-input" required placeholder="0">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Image URL</label>
+          <input type="text" id="inpImage" class="form-input" placeholder="https://...">
+        </div>
+        <div style="display:flex; justify-content:flex-end; gap:1rem; margin-top:2rem">
+          <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save Item</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="assets/shop.js"></script>
+</body>
+</html>

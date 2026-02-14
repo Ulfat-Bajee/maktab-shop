@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Maktab Books</title>
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+  <h1>📚 Maktab Islamic Books</h1>
+  <div id="books"></div>
+
+  <script>
+    fetch("books.json")
+      .then(r => r.json())
+      .then(data => {
+        const container = document.getElementById("books");
+        data.categories.forEach(cat => {
+          container.innerHTML += `<h2>${cat.name}</h2>`;
+          cat.books.forEach(book => {
+            container.innerHTML += `
+              <p>
+                <img src="${book.imageUrl}" alt="${book.title}" width="100"><br>
+                <b>${book.title}</b> - ${book.author}<br>
+                💰 ${book.price}<br>
+                <a href="https://wa.me/92XXXXXXXXX?text=I want ${book.title}">Order via WhatsApp</a> |
+                <a href="mailto:maktab@email.com?subject=Order ${book.title}">Order via Email</a>
+              </p>
+            `;
+          });
+        });
+      });
+  </script>
+</body>
+</html>

@@ -1,0 +1,6 @@
+{
+    "appId": "com.maktabshop.inventory",
+    "appName": "Maktab Shop",
+    "webDir": "www",
+    "bundledWebRuntime": false
+}

@@ -7,9 +7,15 @@
   "scripts": {
     "start": "electron .",
     "pack": "electron-builder --dir",
-    "dist": "electron-builder"
+    "dist": "electron-builder",
+    "android": "npm run build-mobile && npx cap run android",
+    "cap:sync": "npx cap sync",
+    "build-mobile": "powershell -Command \"New-Item -ItemType Directory -Force -Path www; Copy-Item assets -Destination www -Recurse -Force; Copy-Item *.html, supabase-config.json, books.json -Destination www -Force\""
   },
   "devDependencies": {
+    "@capacitor/android": "^8.0.2",
+    "@capacitor/cli": "^8.0.2",
+    "@capacitor/core": "^8.0.2",
     "electron": "^40.1.0",
     "electron-builder": "^26.7.0"
   },
