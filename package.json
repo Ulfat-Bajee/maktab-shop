@@ -10,7 +10,7 @@
     "dist": "electron-builder",
     "android": "npm run build-mobile && npx cap run android",
     "cap:sync": "npx cap sync",
-    "build-mobile": "powershell -Command \"New-Item -ItemType Directory -Force -Path www; Copy-Item assets -Destination www -Recurse -Force; Copy-Item *.html, supabase-config.json, books.json -Destination www -Force\""
+    "build-mobile": "node -e \"const fs=require('fs'); if(!fs.existsSync('www'))fs.mkdirSync('www'); fs.cpSync('assets', 'www/assets', {recursive:true}); fs.readdirSync('.').filter(f=>f.endsWith('.html')||['supabase-config.json','books.json'].includes(f)).forEach(f=>fs.copyFileSync(f, 'www/'+f))\""
   },
   "devDependencies": {
     "@capacitor/android": "^8.0.2",
